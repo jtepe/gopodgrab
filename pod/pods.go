@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -73,7 +72,7 @@ func (e *Episode) String() string {
 }
 
 func ParseFeed(r io.Reader) ([]*Episode, error) {
-	dec := xml.NewDecoder(strings.NewReader(data))
+	dec := xml.NewDecoder(r)
 	var episodes []*Episode
 
 	for {

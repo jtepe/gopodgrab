@@ -21,7 +21,7 @@ func main() {
 		go func(e *pod.Episode) {
 			defer wg.Done()
 			fmt.Printf("downloading %q ...\n", e.Title)
-			err := pod.Download(e)
+			err := pod.DownloadEpisode(e)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "download of %q failed: %v\n", e.Title, err)
 				return

@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-func Download(e *Episode) error {
+func DownloadEpisode(e *Episode) error {
 	u, err := url.Parse(e.File.URL)
 	if err != nil {
 		return err
