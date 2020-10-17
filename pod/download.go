@@ -8,6 +8,9 @@ import (
 	"path"
 )
 
+// DownloadEpisode downloads the podcast episode e.
+// The download size of the episode in bytes is recorded
+// in Episode.Bytes.
 func DownloadEpisode(e *Episode) error {
 	u, err := url.Parse(e.File.URL)
 	if err != nil {
