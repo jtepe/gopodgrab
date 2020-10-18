@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 )
 
 // addPod adds the podcast to the configuration file.
@@ -18,7 +19,7 @@ func addPod(pod *Podcast) error {
 
 	pods = append(pods, pod)
 
-	buf, err := json.Marshal(&pods)
+	buf, err := json.MarshalIndent(&pods, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -35,7 +36,7 @@ func addPod(pod *Podcast) error {
 func podExists(name string) bool {
 	pods, err := readPods()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to read configuration file at %s: %v", confFile(), err)
+		fmt.Fprintf(os.Stderr, "failed to read configuration file at %s: %v\n", confFile(), err)
 		os.Exit(1)
 	}
 
@@ -53,24 +54,29 @@ func podExists(name string) bool {
 // environment variable is set. Otherwise, the current working
 // directory is used. '/.gopodgrab' is appended to the base in any case.
 func confFile() string {
-	h := os.Getenv("HOME")
-	if h == "" {
-		h = "."
+	cf := os.Getenv("HOME")
+	if cf == "" {
+		cf = "."
 	}
 
-	return h
+	cf = cf + "/.gopodgrab/gopodgrab.json"
+	return cf
 }
 
 // readPods retrieves the list of podcasts from the configuration
-// file, if it exists. If it doesn't an empty list is returned.
+// file, if it exists. If it doesn't, the file is created and  an
+// empty list of podcasts is returned.
 // Errors reading the file are passed back to the caller.
 func readPods() ([]*Podcast, error) {
 	var pods []*Podcast
 
-	f, err := os.Open(confFile())
+	cf := confFile()
+
+	f, err := os.Open(cf)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return pods, nil
+			err = createConfFile(cf)
+			return pods, err
 		}
 
 		return nil, err
@@ -82,9 +88,34 @@ func readPods() ([]*Podcast, error) {
 		return nil, err
 	}
 
+	// The config file is still empty.
+	if len(buf) == 0 {
+		return pods, nil
+	}
+
 	if err := json.Unmarshal(buf, &pods); err != nil {
 		return nil, err
 	}
 
 	return pods, nil
+}
+
+// createConfFile creates an empty config file at location cf.
+// It also attempts to create all missing directories in the path.
+func createConfFile(cf string) error {
+	p := path.Dir(cf)
+	if err := os.MkdirAll(p, 0755); err != nil {
+		return err
+	}
+
+	f, err := os.Create(cf)
+	if err != nil {
+		return err
+	}
+
+	if err := f.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }

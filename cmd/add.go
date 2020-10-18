@@ -3,7 +3,14 @@ package cmd
 import (
 	"log"
 
+	"github.com/jtepe/gopodgrab/pod"
 	"github.com/spf13/cobra"
+)
+
+const (
+	flagFeedURL = "feed-url"
+	flagName    = "name"
+	flagStorage = "storage"
 )
 
 var addCmd = &cobra.Command{
@@ -18,12 +25,23 @@ downloads the newest feed.`,
 			return err
 		}
 
-		log.Println("feed-URL", cmd.Flag("feed-url").Value)
-		log.Println("name", cmd.Flag("name").Value)
-		log.Println("storage", cmd.Flag("storage").Value)
+		name := cmd.Flag(flagName).Value.String()
+		feedURL := cmd.Flag(flagFeedURL).Value.String()
+		storage := cmd.Flag(flagStorage).Value.String()
 
-		return nil
+		return add(name, feedURL, storage)
 	},
+}
+
+func add(name, feedURL, storage string) error {
+	podcast, err := pod.NewPodcast(name, feedURL, storage)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("podcast %s added under %s", podcast.Name, podcast.LocalStore)
+
+	return nil
 }
 
 func init() {
