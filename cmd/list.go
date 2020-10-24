@@ -15,7 +15,7 @@ var listCmd = &cobra.Command{
 These are the ones stored in the configuration file. The tool does
 not actually go look and see whether there are any episodes available`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		pods, err := pod.ListPodcasts()
+		pods, err := pod.List()
 		if err != nil {
 			return err
 		}

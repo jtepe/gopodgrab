@@ -43,10 +43,10 @@ func NewPodcast(name, feedURL, storageDir string) (*Podcast, error) {
 	return pod, nil
 }
 
-// ListPodcasts returns the list of managed podcasts from
+// List returns the list of managed podcasts from
 // the configuration file.
 // Failure to read the configuration file results in a error.
-func ListPodcasts() ([]*Podcast, error) {
+func List() ([]*Podcast, error) {
 	pods, err := readPods()
 	if err != nil {
 		return nil, err
