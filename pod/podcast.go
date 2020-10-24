@@ -15,13 +15,13 @@ type Podcast struct {
 	LocalStore string `json:"local_store"` // Directory path of the local store for this podcast
 }
 
-// NewPodcast creates a new podcast and intializes the
+// New creates a new podcast and intializes the
 // local storage for it. If creation of the local storage
 // fails, or a podcast by that name is already managed by
 // gopodgrab, an error is returned.
 // If the refresh of the feed, or adding the configuration
 // of the podcast fails, an error is returned, as well.
-func NewPodcast(name, feedURL, storageDir string) (*Podcast, error) {
+func New(name, feedURL, storageDir string) (*Podcast, error) {
 	if podExists(name) {
 		return nil, ErrPodExists
 	}

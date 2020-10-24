@@ -34,7 +34,7 @@ downloads the newest feed.`,
 }
 
 func add(name, feedURL, storage string) error {
-	podcast, err := pod.NewPodcast(name, feedURL, storage)
+	podcast, err := pod.New(name, feedURL, storage)
 	if err != nil {
 		return err
 	}
