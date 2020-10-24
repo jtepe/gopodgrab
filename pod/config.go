@@ -17,7 +17,7 @@ func addPod(pod *Podcast) error {
 		return err
 	}
 
-	pods = append(pods, pod)
+	pods[pod.Name] = pod
 
 	buf, err := json.MarshalIndent(&pods, "", "  ")
 	if err != nil {
@@ -63,12 +63,12 @@ func confFile() string {
 	return cf
 }
 
-// readPods retrieves the list of podcasts from the configuration
-// file, if it exists. If it doesn't, the file is created and  an
-// empty list of podcasts is returned.
+// readPods retrieves all podcasts from the configuration file
+// indexed by the name of the podcast. If the file doesn't, it
+// is created and an empty map of podcasts is returned.
 // Errors reading the file are passed back to the caller.
-func readPods() ([]*Podcast, error) {
-	var pods []*Podcast
+func readPods() (map[string]*Podcast, error) {
+	pods := make(map[string]*Podcast)
 
 	cf := confFile()
 

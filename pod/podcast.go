@@ -83,7 +83,6 @@ func (pod *Podcast) RefreshFeed() error {
 	err = zipper.Close()
 	if err != nil {
 		return err
-
 	}
 
 	return nil
