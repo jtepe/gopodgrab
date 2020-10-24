@@ -45,8 +45,19 @@ func NewPodcast(name, feedURL, storageDir string) (*Podcast, error) {
 
 // ListPodcasts returns the list of managed podcasts from
 // the configuration file.
-func ListPodcasts() []*Podcast {
-	return nil
+// Failure to read the configuration file results in a error.
+func ListPodcasts() ([]*Podcast, error) {
+	pods, err := readPods()
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*Podcast, 0, len(pods))
+	for _, p := range pods {
+		res = append(res, p)
+	}
+
+	return res, nil
 }
 
 // RefreshFeed updates the locally stored feed from remote.
