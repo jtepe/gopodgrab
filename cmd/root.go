@@ -14,7 +14,7 @@ It lets you download, update, and search your list of podcasts and episodes.`,
 }
 
 func init() {
-	rootCmd.AddCommand(addCmd, listCmd)
+	rootCmd.AddCommand(addCmd, listCmd, showCmd)
 }
 
 func Execute() {

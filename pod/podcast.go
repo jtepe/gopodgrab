@@ -60,6 +60,23 @@ func List() ([]*Podcast, error) {
 	return res, nil
 }
 
+// Get returns a specific podcast from the configuration by name.
+// If the podcast is not found by name, or the configuration file
+// cannot be read, then an error is returned.
+func Get(name string) (*Podcast, error) {
+	pods, err := readPods()
+	if err != nil {
+		return nil, err
+	}
+
+	pod, ok := pods[name]
+	if !ok {
+		return nil, ErrNoEntry
+	}
+
+	return pod, nil
+}
+
 // RefreshFeed updates the locally stored feed from remote.
 func (pod *Podcast) RefreshFeed() error {
 	resp, err := http.Get(pod.FeedURL)
