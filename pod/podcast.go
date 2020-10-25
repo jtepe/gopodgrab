@@ -15,13 +15,13 @@ type Podcast struct {
 	LocalStore string `json:"local_store"` // Directory path of the local store for this podcast
 }
 
-// NewPodcast creates a new podcast and intializes the
+// New creates a new podcast and intializes the
 // local storage for it. If creation of the local storage
 // fails, or a podcast by that name is already managed by
 // gopodgrab, an error is returned.
 // If the refresh of the feed, or adding the configuration
 // of the podcast fails, an error is returned, as well.
-func NewPodcast(name, feedURL, storageDir string) (*Podcast, error) {
+func New(name, feedURL, storageDir string) (*Podcast, error) {
 	if podExists(name) {
 		return nil, ErrPodExists
 	}
@@ -43,10 +43,38 @@ func NewPodcast(name, feedURL, storageDir string) (*Podcast, error) {
 	return pod, nil
 }
 
-// ListPodcasts returns the list of managed podcasts from
+// List returns the list of managed podcasts from
 // the configuration file.
-func ListPodcasts() []*Podcast {
-	return nil
+// Failure to read the configuration file results in a error.
+func List() ([]*Podcast, error) {
+	pods, err := readPods()
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*Podcast, 0, len(pods))
+	for _, p := range pods {
+		res = append(res, p)
+	}
+
+	return res, nil
+}
+
+// Get returns a specific podcast from the configuration by name.
+// If the podcast is not found by name, or the configuration file
+// cannot be read, then an error is returned.
+func Get(name string) (*Podcast, error) {
+	pods, err := readPods()
+	if err != nil {
+		return nil, err
+	}
+
+	pod, ok := pods[name]
+	if !ok {
+		return nil, ErrNoEntry
+	}
+
+	return pod, nil
 }
 
 // RefreshFeed updates the locally stored feed from remote.
@@ -83,7 +111,6 @@ func (pod *Podcast) RefreshFeed() error {
 	err = zipper.Close()
 	if err != nil {
 		return err
-
 	}
 
 	return nil
