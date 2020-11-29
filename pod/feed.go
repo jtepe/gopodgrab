@@ -71,7 +71,7 @@ func (e *Episode) String() string {
 		time.Duration(e.Duration)*time.Second)
 }
 
-func ParseFeed(r io.Reader) ([]*Episode, error) {
+func parseFeed(r io.Reader) ([]*Episode, error) {
 	dec := xml.NewDecoder(r)
 	var episodes []*Episode
 
@@ -100,6 +100,110 @@ func ParseFeed(r io.Reader) ([]*Episode, error) {
 
 	return episodes, nil
 }
+
+var datafew = `
+<root>
+<item>
+            <title>Baphomets Fluch (Stay Forever, Folge 1 REMAKE)</title>
+            <itunes:title>Baphomets Fluch (Stay Forever, Folge 1 REMAKE) Itunes-Name</itunes:title>
+            <description>1996 kam, schon relativ spät in der Hochzeit der Adventures, das aufwändig gestaltete Spiel
+                Baphomets Fluch (Broken Sword) auf den Markt. Entwickler war das kleine englische Studio Revolution
+                Software unter Charles Cecil. Das Spiel fand eine enorm große Fangemeinde und legte den Grundstein für
+                eine der langlebigsten Adventure-Serien. Christian und Gunnar haben die allererste Folge von Stay
+                Forever nochmal ganz neu aufgenommen.
+
+                Infos zum Spiel:
+
+                Thema: Baphomets Fluch
+                Erscheinungsjahr: 1996
+                Genre: Adventure
+                Plattform: MS-DOS, Windows (später jede Plattform von GBA bis iOS)
+                Entwickler: Revolution Software
+                Publisher: Virgin Interactive Ltd.
+                Designer: Charles Cecil, Steve Ince
+
+                Podcast-Credits:
+
+                Sprecher: Christian Schmidt, Gunnar Lott
+                Audioproduktion: Fabian Langer, Christian Schmidt
+                Titelgrafik: Paul Schmidt
+                Intro, Outro: Nino Kerl (Ansage); Chris Hülsbeck (Musik)
+                Chronist: Herr Anym
+                Community Management: Christian Beuster
+            </description>
+            <pubDate>Sun, 28 Aug 2011 10:20:00 +0000</pubDate>
+            <link>https://www.stayforever.de/2019/02/baphomets-fluch-folge-1-remake/</link>
+            <guid isPermaLink="false">b68f0199b5092974e8f663cbaedab0f5</guid>
+            <content:encoded>
+                <![CDATA[Neue Aufnahme der (legendären?) Folge 1
+<p>1996 kam, schon relativ spät in der Hochzeit der Adventures, das aufwändig gestaltete Spiel Baphomets Fluch (Broken Sword) auf den Markt. Entwickler war das kleine englische Studio Revolution Software unter Charles Cecil. Das Spiel fand eine enorm große Fangemeinde und legte den Grundstein für eine der langlebigsten Adventure-Serien.</p>
+<p><img src="https://www.stayforever.de/wp-content/uploads/2019/02/32751-circle-of-blood-dos-front-cover-233x300.jpg" alt="" width="117" height="150" class="alignright size-medium wp-image-4215" /></p>
+<p>Thema: Baphomets Fluch<br>
+Erscheinungsjahr: 1996<br>
+Genre: Adventure<br>
+Plattform: MS-DOS, Windows (später jede Plattform von GBA bis iOS)<br>
+Entwickler: Revolution Software<br>
+Publisher: Virgin Interactive Ltd.<br>
+Designer: Charles Cecil, Steve Ince<br></p>
+<p><strong>Podcast-Credits:</strong></p>
+<p>Sprecher: Christian Schmidt, Gunnar Lott<br>
+Audioproduktion: Fabian Langer, Christian Schmidt<br>
+Titelgrafik: Paul Schmidt<br>
+Intro, Outro: Nino Kerl (Ansage); Chris Hülsbeck (Musik)<br>
+Chronist: Herr Anym<br>
+Community Management: Christian Beuster<br></p>
+<hr>
+<p><strong>Hinweise:</strong> Bitte hier kommentieren oder auf <a href="https://www.reddit.com/r/stayforever/">Reddit</a>. Diese Folge gibt es auch auf <a href="https://www.youtube.com/playlist?list=PLk81FXjsqZvcFtNnm0lzwJ_9EoD1q1td5">Youtube</a>, <a href="https://open.spotify.com/show/0HrgGvhjzvg1Qd9yF0cJ2a">Spotify</a>, <a href="https://podcastd45a61.podigee.io/feed/mp3">im Feed</a> und natürlich auf <a href="https://itunes.apple.com/de/podcast/stay-forever/id461077931?mt=2">iTunes</a>. Wir freuen uns über Reaktionen und Empfehlungen auf <a href="https://twitter.com/stayforeverDE">Twitter</a> oder <a href="https://www.facebook.com/StayForeverPodcast/">Facebook</a>. Wer uns unterstützen möchte, kann das auf <a href="https://steadyhq.com/de/stayforever">Steady</a>, <a href="https://www.patreon.com/stayforever">Patreon</a> oder per Kauf von <a href="https://amzn.to/2Q6D9Fb">irgendwas auf Amazon</a> tun (Affiliate-Link).</p>]]>
+            </content:encoded>
+            <image>
+                <url>
+                    https://images.podigee.com/0x,sofpG_4qf7QOLKyCkgmqPbRxaPo3wd_nvfr8G-cuyiXo=/https://cdn.podigee.com/uploads/u4307/fc4d81c4-b8bf-4a9c-956d-5d1a71e63506.jpg
+                </url>
+                <title>Baphomets Fluch (Stay Forever, Folge 1 REMAKE)</title>
+                <link>https://www.stayforever.de/2019/02/baphomets-fluch-folge-1-remake/</link>
+            </image>
+            <itunes:image
+                    href="https://images.podigee.com/0x,sofpG_4qf7QOLKyCkgmqPbRxaPo3wd_nvfr8G-cuyiXo=/https://cdn.podigee.com/uploads/u4307/fc4d81c4-b8bf-4a9c-956d-5d1a71e63506.jpg"/>
+            <itunes:episode>150</itunes:episode>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:subtitle>Neue Aufnahme der (legendären?) Folge 1</itunes:subtitle>
+            <itunes:summary>1996 kam, schon relativ spät in der Hochzeit der Adventures, das aufwändig gestaltete Spiel
+                Baphomets Fluch (Broken Sword) auf den Markt. Entwickler war das kleine englische Studio Revolution
+                Software unter Charles Cecil. Das Spiel fand eine enorm große Fangemeinde und legte den Grundstein für
+                eine der langlebigsten Adventure-Serien. Christian und Gunnar haben die allererste Folge von Stay
+                Forever nochmal ganz neu aufgenommen.
+
+                Infos zum Spiel:
+
+                Thema: Baphomets Fluch
+                Erscheinungsjahr: 1996
+                Genre: Adventure
+                Plattform: MS-DOS, Windows (später jede Plattform von GBA bis iOS)
+                Entwickler: Revolution Software
+                Publisher: Virgin Interactive Ltd.
+                Designer: Charles Cecil, Steve Ince
+
+                Podcast-Credits:
+
+                Sprecher: Christian Schmidt, Gunnar Lott
+                Audioproduktion: Fabian Langer, Christian Schmidt
+                Titelgrafik: Paul Schmidt
+                Intro, Outro: Nino Kerl (Ansage); Chris Hülsbeck (Musik)
+                Chronist: Herr Anym
+                Community Management: Christian Beuster
+            </itunes:summary>
+            <itunes:explicit>no</itunes:explicit>
+            <itunes:keywords>Charles Cecil,Steve Ince,Broken Sword,Revolution Software,1996,Dosgames,Stay
+                Forever,retrogames,podcast,Baphomets Fluch
+            </itunes:keywords>
+            <itunes:author>Gunnar Lott, Christian Schmidt, Fabian Käufer</itunes:author>
+            <enclosure
+                    url="https://cdn.podigee.com/media/podcast_6853_stay_forever_episode_150_baphomets_fluch_stay_forever_folge_1_remake.m4a?v=1549019798&amp;source=feed"
+                    type="audio/aac" length="73110523"/>
+            <itunes:duration>7110</itunes:duration>
+        </item>
+</root>
+`
 
 var data = `
 <root>

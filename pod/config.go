@@ -50,16 +50,16 @@ func podExists(name string) bool {
 }
 
 // confFile returns the storage location of gopodcrabs configuration
-// file. It uses the user's home directory as base if the HOME
-// environment variable is set. Otherwise, the current working
+// file. It uses the user's default config directory as base the exact
+// location of which is OS dependent. Otherwise, the current working
 // directory is used. '/.gopodgrab' is appended to the base in any case.
 func confFile() string {
-	cf := os.Getenv("HOME")
-	if cf == "" {
+	cf, err := os.UserConfigDir()
+	if err != nil {
 		cf = "."
 	}
 
-	cf = cf + "/.gopodgrab/gopodgrab.json"
+	cf = cf + "/gopodgrab/gopodgrab.json"
 	return cf
 }
 
