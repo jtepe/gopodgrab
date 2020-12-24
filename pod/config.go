@@ -49,7 +49,7 @@ func podExists(name string) bool {
 	return false
 }
 
-// confFile returns the storage location of gopodcrabs configuration
+// confFile returns the storage location of gopodcrab's configuration
 // file. It uses the user's default config directory as base the exact
 // location of which is OS dependent. Otherwise, the current working
 // directory is used. '/.gopodgrab' is appended to the base in any case.
