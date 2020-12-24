@@ -2,12 +2,16 @@ package pod
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 const (
@@ -141,7 +145,6 @@ func (pod *Podcast) NewEpisodes() ([]*Episode, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer arc.Close()
 
 	if len(arc.File) < 1 {
@@ -152,7 +155,6 @@ func (pod *Podcast) NewEpisodes() ([]*Episode, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer feed.Close()
 
 	feedEpis, err := parseFeed(feed)
@@ -226,18 +228,28 @@ func dirExists(path string) bool {
 // storage. For each retrieved episode the size in bytes is recorded
 // in Episode.Bytes.
 func (pod *Podcast) DownloadEpisodes(eps []*Episode) error {
-	for _, e := range eps {
+	totalEps := len(eps)
+	if totalEps == 0 {
+		return nil
+	}
 
-		if err := download(e, pod.LocalStore); err != nil {
+	for i, e := range eps {
+		pgb := newProgressBar(e.File.Size)
+		pgb.Describe(fmt.Sprintf("[cyan][%d/%d][reset] %s", i+1, totalEps, e.Title))
+
+		if err := download(e, pod.LocalStore, pgb); err != nil {
 			return err
 		}
 	}
 
+	fmt.Printf("Finished downloading %d episodes.\n", len(eps))
+
 	return nil
 }
 
-// download downloads Episode e to the directory dir.
-func download(e *Episode, dir string) error {
+// download downloads Episode e to the directory dir. It accepts an
+// optional progressbar to display the progress while downloading.
+func download(e *Episode, dir string, pgb *progressbar.ProgressBar) error {
 	u, err := url.Parse(e.File.URL)
 	if err != nil {
 		return err
@@ -257,11 +269,40 @@ func download(e *Episode, dir string) error {
 	}
 	defer f.Close()
 
-	n, err := io.Copy(f, resp.Body)
+	var w io.Writer = f
+
+	if pgb != nil {
+		w = io.MultiWriter(f, pgb)
+	}
+
+	n, err := io.Copy(w, resp.Body)
 	if err != nil {
 		return err
 	}
 	e.Bytes = n
 
+	fmt.Println()
+
 	return nil
+}
+
+// newProgressBar creates a new progressbar to display download progress.
+// It is scoped to a length of totalBytes and constantly displays the
+// amount in a humanized format.
+func newProgressBar(totalBytes int64) *progressbar.ProgressBar {
+	return progressbar.NewOptions64(totalBytes,
+		progressbar.OptionFullWidth(),
+		progressbar.OptionEnableColorCodes(true),
+		progressbar.OptionSetPredictTime(false),
+		progressbar.OptionThrottle(200*time.Millisecond),
+		progressbar.OptionSetWriter(os.Stderr),
+		progressbar.OptionShowCount(),
+		progressbar.OptionShowBytes(true),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "[red]=[reset]",
+			SaucerHead:    "[red]>[reset]",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}))
 }

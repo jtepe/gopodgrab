@@ -44,22 +44,36 @@ The special name "all" updates all managed podcasts.`,
 }
 
 func updatePods(pods []*pod.Podcast) error {
+	newEps := make(map[*pod.Podcast][]*pod.Episode)
+
 	for _, p := range pods {
 		eps, err := p.NewEpisodes()
 		if err != nil {
 			return err
 		}
 
-		if len(eps) == 0 {
-			return nil
-		}
+		newEps[p] = eps
+	}
 
+	if len(newEps) == 0 {
+		fmt.Println("No new episodes. Nothing to do.")
+		return nil
+	}
+
+	for p, eps := range newEps {
 		fmt.Printf("%s:\n------------------\n", p.Name)
 		for _, e := range eps {
 			fmt.Println(e.Title)
 		}
+	}
 
-		if waitApproval() {
+	var numEps int
+	for _, eps := range newEps {
+		numEps += len(eps)
+	}
+
+	if waitApproval(numEps) {
+		for p, eps := range newEps {
 			if err := p.DownloadEpisodes(eps); err != nil {
 				return err
 			}
@@ -69,11 +83,11 @@ func updatePods(pods []*pod.Podcast) error {
 	return nil
 }
 
-// waitApproval blocks until the user confirms the progression with
-// a "y" or "yes" input. Every other input (or error) is interpreted
-// as disapproval.
-func waitApproval() bool {
-	fmt.Print("Do you want to download the episodes? (yes/no) ")
+// waitApproval blocks until the user confirms the download of numEps podcast
+// episodes with a "y" or "yes" input. Every other input (or error) is
+// interpreted as disapproval.
+func waitApproval(numEps int) bool {
+	fmt.Printf("\nDo you want to download %d episodes? (yes/no) ", numEps)
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
 		if s.Text() == "y" || s.Text() == "yes" {
