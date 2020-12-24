@@ -11,7 +11,7 @@ var Version = "development"
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version",
-	Long:  "Show the full version information from gopodgrab.",
+	Long:  "Show the full version information of gopodgrab.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("gopodgrab", Version)
 	},

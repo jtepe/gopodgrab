@@ -73,11 +73,14 @@ func updatePods(pods []*pod.Podcast) error {
 // a "y" or "yes" input. Every other input (or error) is interpreted
 // as disapproval.
 func waitApproval() bool {
+	fmt.Print("Do you want to download the episodes? (yes/no) ")
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
 		if s.Text() == "y" || s.Text() == "yes" {
 			return true
 		}
+
+		break
 	}
 
 	return false
