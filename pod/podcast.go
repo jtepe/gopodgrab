@@ -31,8 +31,6 @@ type Podcast struct {
 // local storage for it. If creation of the local storage
 // fails, or a podcast by that name is already managed by
 // gopodgrab, an error is returned.
-// If the refresh of the feed, or adding the configuration
-// of the podcast fails, an error is returned, as well.
 func New(name, feedURL, storageDir string) (*Podcast, error) {
 	if name == ReservedPodName {
 		return nil, ErrReservedName
@@ -48,7 +46,7 @@ func New(name, feedURL, storageDir string) (*Podcast, error) {
 		LocalStore: storageDir,
 	}
 
-	if err := pod.refreshFeed(); err != nil {
+	if err := pod.RefreshFeed(); err != nil {
 		return nil, err
 	}
 
@@ -93,8 +91,8 @@ func Get(name string) (*Podcast, error) {
 	return pod, nil
 }
 
-// refreshFeed updates the locally stored feed from remote.
-func (pod *Podcast) refreshFeed() error {
+// RefreshFeed updates the locally stored feed from remote.
+func (pod *Podcast) RefreshFeed() error {
 	resp, err := http.Get(pod.FeedURL)
 	if err != nil {
 		return err
@@ -106,7 +104,7 @@ func (pod *Podcast) refreshFeed() error {
 		return err
 	}
 
-	f, err := os.Create(pod.feedFile())
+	f, err := os.Create(pod.FeedFile())
 	if err != nil {
 		return err
 	}
@@ -141,7 +139,7 @@ func (pod *Podcast) NewEpisodes() ([]*Episode, error) {
 		return nil, err
 	}
 
-	arc, err := zip.OpenReader(pod.feedFile())
+	arc, err := zip.OpenReader(pod.FeedFile())
 	if err != nil {
 		return nil, err
 	}
@@ -209,8 +207,8 @@ func (pod *Podcast) storeExists() error {
 	return nil
 }
 
-// feedFile returns the full file path of the locally stored, zipped feed.
-func (pod *Podcast) feedFile() string {
+// FeedFile returns the full file path of the locally stored, zipped feed.
+func (pod *Podcast) FeedFile() string {
 	return filepath.Join(pod.LocalStore, feedFileName)
 }
 
