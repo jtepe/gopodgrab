@@ -18,7 +18,8 @@ func init() {
 		listCmd,
 		showCmd,
 		versionCmd,
-		updateCmd)
+		updateCmd,
+		doctorCmd)
 }
 
 func Execute() {
