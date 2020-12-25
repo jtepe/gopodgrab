@@ -68,11 +68,16 @@ func updatePods(pods []*pod.Podcast) error {
 	}
 
 	var numEps int
+	var totalBytes int64
 	for _, eps := range newEps {
 		numEps += len(eps)
+
+		for _, e := range eps {
+			totalBytes += e.File.Size
+		}
 	}
 
-	if waitApproval(numEps) {
+	if waitApproval(numEps, totalBytes) {
 		for p, eps := range newEps {
 			if err := p.DownloadEpisodes(eps); err != nil {
 				return err
@@ -83,11 +88,15 @@ func updatePods(pods []*pod.Podcast) error {
 	return nil
 }
 
-// waitApproval blocks until the user confirms the download of numEps podcast
+// waitApproval blocks until the user confirms the download of podcast
 // episodes with a "y" or "yes" input. Every other input (or error) is
 // interpreted as disapproval.
-func waitApproval(numEps int) bool {
-	fmt.Printf("\nDo you want to download %d episodes? (yes/no) ", numEps)
+//
+// The total number and size of the episodes will be shown in the prompt.
+func waitApproval(numEps int, totalBytes int64) bool {
+	bytesHuman := humanized(totalBytes)
+
+	fmt.Printf("\nDownload %d episodes for %s? (yes/no) ", numEps, bytesHuman)
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
 		if s.Text() == "y" || s.Text() == "yes" {
@@ -98,4 +107,20 @@ func waitApproval(numEps int) bool {
 	}
 
 	return false
+}
+
+// humanized gives a string representation of bytes that is supposed to be
+// more understandable for humans.
+func humanized(bytes int64) string {
+	num := float64(bytes)
+	exp := 0
+
+	for num >= 1024 && exp < 4 {
+		num = num / 1024
+		exp++
+	}
+
+	unit := [4]string{"B", "KB", "MB", "GB"}
+
+	return fmt.Sprintf("%.2f %s", num, unit[exp])
 }
